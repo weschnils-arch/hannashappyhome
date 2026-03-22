@@ -29,7 +29,7 @@ export default function UeberMich() {
             </div>
           </div>
           <div className="rounded-[2rem] overflow-hidden shadow-lg">
-            <img src="/images/about/IMG_5042.webp" alt="Hanna" loading="lazy" className="w-full h-[360px] md:h-[440px] object-cover" />
+            <img src="/images/about/IMG_5042.webp" alt="Hanna" loading="lazy" className="w-full h-[360px] md:h-[440px] object-cover object-bottom" />
           </div>
         </div>
 
