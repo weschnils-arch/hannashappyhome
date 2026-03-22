@@ -113,12 +113,29 @@ export default function Home() {
         {/* Beige base */}
         <div className="absolute inset-0 bg-bg" />
 
-        {/* Sage section — top right with concave circular cutout */}
+        {/* Sage section — premium gradient with depth */}
         <div className="absolute hidden lg:block" style={{
           top: 0, right: 0, width: '55%', height: '100%',
-          background: 'var(--color-sage)',
+          background: 'linear-gradient(135deg, #5C7F5A 0%, #6B8F71 25%, #7DA07B 50%, #8FB596 75%, #A3C4A0 100%)',
           borderRadius: '0 0 0 50%',
-        }} />
+        }}>
+          {/* Subtle radial glow */}
+          <div className="absolute inset-0" style={{
+            background: 'radial-gradient(circle at 30% 40%, rgba(255,255,255,0.12) 0%, transparent 60%)',
+          }} />
+          {/* Organic texture overlay */}
+          <div className="absolute inset-0 opacity-[0.04]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+          {/* Bottom edge soft shadow for depth */}
+          <div className="absolute bottom-0 left-0 right-0 h-32" style={{
+            background: 'linear-gradient(to top, rgba(0,0,0,0.06), transparent)',
+          }} />
+          {/* Decorative circles */}
+          <div className="absolute top-20 right-16 w-40 h-40 rounded-full border border-white/10" />
+          <div className="absolute bottom-32 right-24 w-24 h-24 rounded-full border border-white/8" />
+          <div className="absolute top-1/2 left-8 w-16 h-16 rounded-full bg-white/5" />
+        </div>
 
         {/* Content */}
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-10 min-h-screen flex flex-col justify-center pt-20">
