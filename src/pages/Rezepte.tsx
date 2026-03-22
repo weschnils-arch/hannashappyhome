@@ -41,7 +41,7 @@ export default function Rezepte() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
             <div>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-heading font-medium tracking-tight mb-3">Rezepte</h1>
-              <p className="text-muted text-base md:text-lg">Alle Rezepte auf einen Blick</p>
+              <p className="text-muted text-base md:text-lg">Finde dein Lieblingsrezept</p>
             </div>
           </div>
           {/* Search bar */}
@@ -112,8 +112,8 @@ export default function Rezepte() {
 
         {filtered.length === 0 && (
           <div className="text-center py-20">
-            <p className="font-display text-xl text-muted mb-4">Keine Rezepte in dieser Kategorie</p>
-            <button onClick={() => pick('Alle')} className="text-sm text-sage hover:underline cursor-pointer">Alle anzeigen</button>
+            <p className="font-display text-xl text-muted mb-4">Kein Rezept in dieser Kategorie</p>
+            <button onClick={() => pick('Alle')} className="text-sm text-sage hover:underline cursor-pointer">Alles anzeigen</button>
           </div>
         )}
       </div>

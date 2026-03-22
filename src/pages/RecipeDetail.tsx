@@ -20,7 +20,7 @@ export default function RecipeDetail() {
         {/* Back */}
         <Link to="/rezepte" className="inline-flex items-center gap-2 text-sm text-muted hover:text-sage mb-6 transition-colors">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-          Alle Rezepte
+          Zurück zur Übersicht
         </Link>
 
         {/* Hero image */}
@@ -118,7 +118,7 @@ export default function RecipeDetail() {
           <div className="mt-16 pt-8 border-t border-line text-center">
             <Link to="/rezepte" className="inline-flex items-center gap-2 bg-sage hover:bg-sage-dark text-white text-sm font-medium px-7 py-3.5 rounded-full transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-              Alle Rezepte
+              Zurück zur Übersicht
             </Link>
           </div>
         </div>

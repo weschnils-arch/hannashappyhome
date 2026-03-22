@@ -260,13 +260,13 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-6 md:px-10">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
             <div>
-              <p className="text-xs tracking-[0.2em] uppercase text-sage mb-2 font-medium">Beliebte Rezepte</p>
+              <p className="text-xs tracking-[0.2em] uppercase text-sage mb-2 font-medium">Mein Lieblingsrezept</p>
               <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-heading font-medium tracking-tight">
-                Unsere Lieblingsrezepte
+                Meine Lieblingsrezepte
               </h2>
             </div>
             <Link to="/rezepte" className="text-sm text-sage hover:text-sage-dark font-medium transition-colors">
-              Alle ansehen &rarr;
+              Mehr ansehen &rarr;
             </Link>
           </div>
           <div ref={cards1Ref} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -296,13 +296,13 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-6 md:px-10">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
             <div>
-              <p className="text-xs tracking-[0.2em] uppercase text-sage mb-2 font-medium">Noch mehr entdecken</p>
+              <p className="text-xs tracking-[0.2em] uppercase text-sage mb-2 font-medium">Noch mehr zum Entdecken</p>
               <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-heading font-medium tracking-tight">
-                Weitere Favoriten
+                Mein weiterer Favorit
               </h2>
             </div>
             <Link to="/rezepte" className="text-sm text-sage hover:text-sage-dark font-medium transition-colors">
-              Alle Rezepte &rarr;
+              Mehr Rezepte &rarr;
             </Link>
           </div>
           <div ref={cards2Ref} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
