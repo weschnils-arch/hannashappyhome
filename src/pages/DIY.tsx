@@ -8,7 +8,7 @@ export default function DIY() {
         {/* Header */}
         <div className="mb-6">
           <p className="text-xs tracking-[0.2em] uppercase text-sage mb-2 font-medium">Selbermachen</p>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-heading font-medium tracking-tight mb-3">DIY</h1>
+          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-heading font-medium tracking-tight mb-3">Do It Yourself</h1>
           <p className="text-muted text-base md:text-lg max-w-xl">
             Basics aus der Küche selber machen — von Toastbrot bis Mayonnaise. Weil nicht immer alles gekauft werden muss.
           </p>
