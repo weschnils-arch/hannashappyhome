@@ -1,0 +1,128 @@
+import { useParams, Link } from 'react-router-dom'
+import { getRecipeBySlug } from '../data/recipes'
+
+export default function RecipeDetail() {
+  const { slug } = useParams<{ slug: string }>()
+  const r = slug ? getRecipeBySlug(slug) : undefined
+
+  if (!r) {
+    return (
+      <main className="min-h-screen bg-bg pt-32 flex flex-col items-center justify-center px-6">
+        <h1 className="font-display text-4xl text-heading mb-4">Rezept nicht gefunden</h1>
+        <Link to="/rezepte" className="bg-sage text-white text-sm px-6 py-3 rounded-full hover:bg-sage-dark transition-colors">Zurück zu allen Rezepten</Link>
+      </main>
+    )
+  }
+
+  return (
+    <main className="min-h-screen bg-bg pt-24 pb-20">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-10">
+        {/* Back */}
+        <Link to="/rezepte" className="inline-flex items-center gap-2 text-sm text-muted hover:text-sage mb-6 transition-colors">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          Alle Rezepte
+        </Link>
+
+        {/* Hero image */}
+        <div className="rounded-2xl md:rounded-3xl overflow-hidden mb-10">
+          <img src={r.image} alt={r.name} className="w-full h-[300px] md:h-[450px] lg:h-[500px] object-cover" />
+        </div>
+
+        {/* Content */}
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <span className="inline-block bg-sage/10 text-sage text-xs tracking-wider uppercase font-medium px-4 py-1.5 rounded-full mb-4">{r.category}</span>
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl text-heading font-medium tracking-tight">{r.name}</h1>
+            </div>
+            <button
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({ title: r.name, text: r.desc, url: window.location.href })
+                } else {
+                  navigator.clipboard.writeText(window.location.href)
+                  alert('Link kopiert!')
+                }
+              }}
+              className="shrink-0 mt-2 w-11 h-11 rounded-full bg-white border border-line hover:border-sage/40 flex items-center justify-center transition-colors cursor-pointer group"
+              aria-label="Rezept teilen"
+            >
+              <svg className="w-5 h-5 text-muted group-hover:text-sage transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+              </svg>
+            </button>
+          </div>
+          <p className="text-body text-base md:text-lg leading-relaxed mb-8">{r.desc}</p>
+
+          {/* Meta */}
+          <div className="flex flex-wrap gap-6 py-6 border-y border-line mb-10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center">
+                <svg className="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="1.5"/><path d="M12 6v6l4 2" strokeWidth="1.5" strokeLinecap="round"/></svg>
+              </div>
+              <div>
+                <p className="text-[0.7rem] text-muted uppercase tracking-wide">Dauer</p>
+                <p className="text-sm text-heading font-medium">{r.time}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center">
+                <svg className="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.663 17h4.674M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+              <div>
+                <p className="text-[0.7rem] text-muted uppercase tracking-wide">Schwierigkeit</p>
+                <p className="text-sm text-heading font-medium">{r.difficulty}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center">
+                <svg className="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+              <div>
+                <p className="text-[0.7rem] text-muted uppercase tracking-wide">Portionen</p>
+                <p className="text-sm text-heading font-medium">{r.servings}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Two columns: ingredients + steps */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
+            <div className="md:col-span-2">
+              <div className="bg-white rounded-2xl p-6 border border-line sticky top-24">
+                <h2 className="font-display text-xl text-heading font-medium mb-5">Zutaten</h2>
+                <ul className="space-y-2.5">
+                  {r.ingredients.map((ing, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-body">
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-sage shrink-0" />
+                      {ing}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="md:col-span-3">
+              <h2 className="font-display text-xl text-heading font-medium mb-6">Zubereitung</h2>
+              <div className="space-y-6">
+                {r.steps.map((step, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="shrink-0 w-9 h-9 rounded-full bg-sage text-white text-sm font-medium flex items-center justify-center">{i + 1}</div>
+                    <p className="text-sm text-body leading-relaxed pt-2">{step}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom CTA */}
+          <div className="mt-16 pt-8 border-t border-line text-center">
+            <Link to="/rezepte" className="inline-flex items-center gap-2 bg-sage hover:bg-sage-dark text-white text-sm font-medium px-7 py-3.5 rounded-full transition-colors">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+              Alle Rezepte
+            </Link>
+          </div>
+        </div>
+      </div>
+    </main>
+  )
+}
