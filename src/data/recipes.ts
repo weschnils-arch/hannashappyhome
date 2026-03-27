@@ -10,6 +10,7 @@ export interface Recipe {
   servings: string
   ingredients: string[]
   steps: string[]
+  instagramUrl?: string
 }
 
 export const categories = ['Alle', 'Pfannengerichte', 'Backofenrezepte', 'Süßes', 'Nudelgerichte', 'One Pot', 'Blech', 'DIY'] as const
@@ -23,6 +24,7 @@ export const recipes: Recipe[] = [
     time: '40 Min.', difficulty: 'Mittel', servings: '4 Portionen',
     ingredients: ['8-9 Schnitzel vom Rind', 'Senf & Mehl', '1 Zwiebel', '2 Knoblauchzehen', '400g Champignons', '500ml Rindssuppe', '1 TL Tomatenmark', '1 TL Paprikapulver', 'Salz & Pfeffer', '4 EL Sahne', '3 EL Mehl'],
     steps: ['Schnitzel klopfen, würzen, eine Seite mit Senf bestreichen, andere in Mehl wenden.', 'Beidseitig anbraten, zur Seite legen.', 'Zwiebel, Knoblauch & Champignons anrösten.', 'Mit Suppe aufgießen, Tomatenmark & Paprika einrühren.', 'Schnitzel zurücklegen, 20 Min. köcheln.', 'Sahne einrühren, mit Mehl eindicken.'],
+    instagramUrl: 'https://www.instagram.com/reel/C9NJleWN8MK/',
   },
   {
     id: '010', slug: 'one-pot-schlemmertopf', name: 'One-Pot Schlemmertopf', category: 'One Pot',

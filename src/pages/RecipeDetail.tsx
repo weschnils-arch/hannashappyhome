@@ -1,9 +1,16 @@
 import { useParams, Link } from 'react-router-dom'
-import { getRecipeBySlug } from '../data/recipes'
+import { getRecipeBySlug, recipes } from '../data/recipes'
 
 export default function RecipeDetail() {
   const { slug } = useParams<{ slug: string }>()
   const r = slug ? getRecipeBySlug(slug) : undefined
+
+  const suggestions = r
+    ? recipes
+        .filter((rec) => rec.id !== r.id)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+    : []
 
   if (!r) {
     return (
@@ -85,9 +92,30 @@ export default function RecipeDetail() {
             </div>
           </div>
 
-          {/* Two columns: ingredients + steps */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
-            <div className="md:col-span-2">
+        </div>
+
+          {/* Grid: Video | Zutaten | Zubereitung */}
+          <div className={`grid grid-cols-1 gap-10 items-start ${r.instagramUrl ? 'md:grid-cols-7' : 'md:grid-cols-5 max-w-3xl mx-auto'}`}>
+            {/* Instagram Video — left column */}
+            {r.instagramUrl && (
+              <div className="md:col-span-2">
+                <h2 className="font-display text-xl text-heading font-medium mb-5">Video zum Rezept</h2>
+                <div className="rounded-2xl border border-line overflow-hidden bg-white">
+                  <iframe
+                    src={`${r.instagramUrl}embed/captioned/`}
+                    className="w-full"
+                    height="580"
+                    allowTransparency
+                    allow="encrypted-media"
+                    loading="lazy"
+                    style={{ border: 'none', margin: '-1px' }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Zutaten */}
+            <div className={`md:col-span-2 ${r.instagramUrl ? 'md:pt-[52px]' : ''}`}>
               <div className="bg-white rounded-2xl p-6 border border-line sticky top-24">
                 <h2 className="font-display text-xl text-heading font-medium mb-5">Zutaten</h2>
                 <ul className="space-y-2.5">
@@ -101,7 +129,8 @@ export default function RecipeDetail() {
               </div>
             </div>
 
-            <div className="md:col-span-3">
+            {/* Zubereitung */}
+            <div className={`md:col-span-3 ${r.instagramUrl ? 'md:pt-[52px]' : ''}`}>
               <h2 className="font-display text-xl text-heading font-medium mb-6">Zubereitung</h2>
               <div className="space-y-6">
                 {r.steps.map((step, i) => (
@@ -114,8 +143,29 @@ export default function RecipeDetail() {
             </div>
           </div>
 
+        <div className="max-w-3xl mx-auto">
+
+          {/* Vorschläge */}
+          <div className="mt-16 pt-10 border-t border-line">
+            <h2 className="font-display text-2xl text-heading font-medium mb-8">Das könnte dir auch schmecken</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {suggestions.map((s) => (
+                <Link key={s.id} to={`/rezepte/${s.slug}`} className="group">
+                  <div className="rounded-2xl overflow-hidden border border-line bg-white transition-shadow hover:shadow-lg">
+                    <img src={s.image} alt={s.name} loading="lazy" className="w-full h-[200px] object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="p-4">
+                      <span className="text-[0.65rem] tracking-widest uppercase text-sage font-medium">{s.category}</span>
+                      <h3 className="font-display text-base text-heading font-medium mt-1 group-hover:text-sage transition-colors">{s.name}</h3>
+                      <p className="text-xs text-muted mt-1">{s.time} · {s.difficulty}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
           {/* Bottom CTA */}
-          <div className="mt-16 pt-8 border-t border-line text-center">
+          <div className="mt-12 pt-8 border-t border-line text-center">
             <Link to="/rezepte" className="inline-flex items-center gap-2 bg-sage hover:bg-sage-dark text-white text-sm font-medium px-7 py-3.5 rounded-full transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
               Zurück zur Übersicht
