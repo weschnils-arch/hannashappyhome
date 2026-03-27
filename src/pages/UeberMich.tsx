@@ -29,14 +29,14 @@ export default function UeberMich() {
             </div>
           </div>
           <div className="rounded-[2rem] overflow-hidden shadow-lg">
-            <img src="/images/about/IMG_5042.webp" alt="Hanna" loading="lazy" className="w-full h-[360px] md:h-[440px] object-cover object-bottom" />
+            <img src="/images/about/hanna-family-kitchen.webp" alt="Hanna mit Baby" loading="lazy" className="w-full h-[360px] md:h-[440px] object-cover" style={{ objectPosition: '50% 20%' }} />
           </div>
         </div>
 
         {/* Section 3 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center mb-20">
           <div className="rounded-[2rem] overflow-hidden shadow-lg order-2 lg:order-1">
-            <img src="/images/about/IMG_5029.webp" alt="Hanna" loading="lazy" className="w-full h-[360px] md:h-[440px] object-cover" />
+            <img src="/images/about/IMG_5029.webp" alt="Hanna" loading="lazy" className="w-full h-[360px] md:h-[440px] object-cover" style={{ objectPosition: '50% 30%' }} />
           </div>
           <div className="order-1 lg:order-2">
             <h2 className="font-display text-2xl md:text-3xl text-heading font-medium mb-6">Wissen teilen</h2>

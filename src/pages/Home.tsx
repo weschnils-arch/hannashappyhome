@@ -317,7 +317,7 @@ export default function Home() {
         <div ref={aboutRef} className="max-w-[1280px] mx-auto px-6 md:px-10" style={{ opacity: 0 }}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div className="rounded-[2rem] overflow-hidden shadow-lg">
-              <img src="/images/about/IMG_5047.webp" alt="Hanna" loading="lazy" className="w-full h-[360px] md:h-[480px] object-cover" />
+              <img src="/images/about/IMG_5047.webp" alt="Hanna" loading="lazy" className="w-full h-[360px] md:h-[480px] object-cover" style={{ objectPosition: '50% 20%' }} />
             </div>
             <div>
               <p className="text-xs tracking-[0.2em] uppercase text-sage mb-3 font-medium">Über Hanna</p>
