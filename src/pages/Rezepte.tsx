@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { categories, filterByCategory, searchRecipes } from '../data/recipes'
+import { categories, meals, seasons, filterRecipes, searchRecipes } from '../data/recipes'
 import type { Category } from '../data/recipes'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -10,28 +10,40 @@ gsap.registerPlugin(ScrollTrigger)
 export default function Rezepte() {
   const [params, setParams] = useSearchParams()
   const urlCat = params.get('category') as Category | null
-  const [active, setActive] = useState<Category>(urlCat && categories.includes(urlCat) ? urlCat : 'Alle')
+  const [activeCat, setActiveCat] = useState<string>(urlCat && categories.includes(urlCat) ? urlCat : 'Alle')
+  const [activeMeal, setActiveMeal] = useState('Alle')
+  const [activeSeason, setActiveSeason] = useState('Alle')
   const [search, setSearch] = useState('')
   const gridRef = useRef<HTMLDivElement>(null)
 
   const filtered = search.trim().length >= 2
     ? searchRecipes(search)
-    : filterByCategory(active)
+    : filterRecipes(activeCat, activeMeal, activeSeason)
 
   useEffect(() => {
-    if (urlCat && categories.includes(urlCat)) setActive(urlCat)
+    if (urlCat && categories.includes(urlCat)) setActiveCat(urlCat)
   }, [urlCat])
 
   useEffect(() => {
     if (!gridRef.current) return
     const cards = gridRef.current.querySelectorAll('.r-card')
     gsap.fromTo(cards, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power3.out' })
-  }, [filtered.length, active, search])
+  }, [filtered.length, activeCat, activeMeal, activeSeason, search])
 
-  const pick = (cat: Category) => {
-    setActive(cat)
+  const pickCat = (cat: string) => {
+    setActiveCat(cat)
     setParams(cat === 'Alle' ? {} : { category: cat })
   }
+
+  const resetFilters = () => {
+    setActiveCat('Alle')
+    setActiveMeal('Alle')
+    setActiveSeason('Alle')
+    setSearch('')
+    setParams({})
+  }
+
+  const hasActiveFilters = activeCat !== 'Alle' || activeMeal !== 'Alle' || activeSeason !== 'Alle'
 
   return (
     <main className="min-h-screen bg-bg pt-28 pb-20">
@@ -50,7 +62,7 @@ export default function Rezepte() {
             <input
               type="text"
               value={search}
-              onChange={e => { setSearch(e.target.value); if (e.target.value.length >= 2) setActive('Alle') }}
+              onChange={e => { setSearch(e.target.value); if (e.target.value.length >= 2) { setActiveCat('Alle'); setActiveMeal('Alle'); setActiveSeason('Alle') } }}
               placeholder="Rezept oder Zutat suchen..."
               className="w-full pl-11 pr-4 py-3 rounded-full bg-white border border-line text-sm text-heading placeholder:text-muted/50 focus:outline-none focus:border-sage focus:ring-2 focus:ring-sage/15 transition-all"
             />
@@ -62,14 +74,62 @@ export default function Rezepte() {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* 3 Dropdown Filters (#8) */}
+        <div className="flex flex-wrap gap-3 mb-6">
+          <div className="relative">
+            <select
+              value={activeCat}
+              onChange={e => pickCat(e.target.value)}
+              className="appearance-none bg-white border border-line rounded-full px-5 py-2.5 pr-10 text-sm text-heading cursor-pointer focus:outline-none focus:border-sage transition-colors"
+            >
+              {categories.map(c => (
+                <option key={c} value={c}>{c === 'Alle' ? 'Nach Art' : c}</option>
+              ))}
+            </select>
+            <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+
+          <div className="relative">
+            <select
+              value={activeMeal}
+              onChange={e => setActiveMeal(e.target.value)}
+              className="appearance-none bg-white border border-line rounded-full px-5 py-2.5 pr-10 text-sm text-heading cursor-pointer focus:outline-none focus:border-sage transition-colors"
+            >
+              {meals.map(m => (
+                <option key={m} value={m}>{m === 'Alle' ? 'Nach Mahlzeit' : m}</option>
+              ))}
+            </select>
+            <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+
+          <div className="relative">
+            <select
+              value={activeSeason}
+              onChange={e => setActiveSeason(e.target.value)}
+              className="appearance-none bg-white border border-line rounded-full px-5 py-2.5 pr-10 text-sm text-heading cursor-pointer focus:outline-none focus:border-sage transition-colors"
+            >
+              {seasons.map(s => (
+                <option key={s} value={s}>{s === 'Alle' ? 'Nach Saison' : s}</option>
+              ))}
+            </select>
+            <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+
+          {hasActiveFilters && (
+            <button onClick={resetFilters} className="text-sm text-sage hover:text-sage-dark font-medium px-4 py-2.5 cursor-pointer transition-colors">
+              Filter zurücksetzen
+            </button>
+          )}
+        </div>
+
+        {/* Quick category pills */}
         <div className="flex flex-wrap gap-2.5 mb-12">
           {categories.map(cat => (
             <button
               key={cat}
-              onClick={() => pick(cat)}
+              onClick={() => pickCat(cat)}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${
-                active === cat
+                activeCat === cat
                   ? 'bg-sage text-white shadow-md shadow-sage/20'
                   : 'bg-white text-muted hover:text-heading border border-line hover:border-sage/30'
               }`}
@@ -112,8 +172,8 @@ export default function Rezepte() {
 
         {filtered.length === 0 && (
           <div className="text-center py-20">
-            <p className="font-display text-xl text-muted mb-4">Kein Rezept in dieser Kategorie</p>
-            <button onClick={() => pick('Alle')} className="text-sm text-sage hover:underline cursor-pointer">Alles anzeigen</button>
+            <p className="font-display text-xl text-muted mb-4">Kein Rezept gefunden</p>
+            <button onClick={resetFilters} className="text-sm text-sage hover:underline cursor-pointer">Alle anzeigen</button>
           </div>
         )}
       </div>

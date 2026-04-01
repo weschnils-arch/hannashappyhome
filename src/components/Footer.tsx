@@ -22,7 +22,7 @@ export default function Footer() {
             <nav className="flex flex-col gap-3">
               <Link to="/" className="text-sm text-bg/60 hover:text-bg transition-colors">Startseite</Link>
               <Link to="/rezepte" className="text-sm text-bg/60 hover:text-bg transition-colors">Rezepte</Link>
-              <Link to="/diy" className="text-sm text-bg/60 hover:text-bg transition-colors">DIY</Link>
+              <Link to="/hausgemachtes" className="text-sm text-bg/60 hover:text-bg transition-colors">Hausgemachtes</Link>
               <Link to="/ueber-mich" className="text-sm text-bg/60 hover:text-bg transition-colors">Über mich</Link>
             </nav>
           </div>

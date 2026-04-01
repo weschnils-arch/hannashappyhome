@@ -8,17 +8,17 @@ import SectionDivider from '../components/SectionDivider'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const featured1 = recipes.filter(r => r.category !== 'DIY').slice(0, 4)
-const featured2 = recipes.filter(r => r.category !== 'DIY').slice(4, 8)
+const featured1 = recipes.filter(r => r.category !== 'Hausgemachtes').slice(0, 4)
+const featured2 = recipes.filter(r => r.category !== 'Hausgemachtes').slice(4, 8)
 
 const heroSlides = [
-  { image: '/images/recipes/046-honig-senf-haehnchen-vom-blech.webp', name: 'Honig Senf Hähnchen' },
-  { image: '/images/recipes/021-erdbeer-tiramisu.webp', name: 'Erdbeer Tiramisu' },
-  { image: '/images/recipes/085-germknoedel-mit-vanillesosse.webp', name: 'Germknödel' },
-  { image: '/images/recipes/058-pfirsich-zimt-kuchen.webp', name: 'Pfirsich Zimt Kuchen' },
-  { image: '/images/recipes/062-pulled-pork.webp', name: 'Pulled Pork' },
+  { image: '/images/recipes/046-honig-senf-haehnchen-vom-blech.webp', name: 'Honig Senf Hähnchen', slug: 'honig-senf-haehnchen' },
+  { image: '/images/recipes/021-erdbeer-tiramisu.webp', name: 'Erdbeer Tiramisu', slug: 'erdbeer-tiramisu' },
+  { image: '/images/recipes/085-germknoedel-mit-vanillesosse.webp', name: 'Germknödel', slug: 'germknoedel' },
+  { image: '/images/recipes/058-pfirsich-zimt-kuchen.webp', name: 'Pfirsich Zimt Kuchen', slug: 'pfirsich-zimt-kuchen' },
+  { image: '/images/recipes/062-pulled-pork.webp', name: 'Pulled Pork', slug: 'pulled-pork' },
 ]
-const cats = ['Pfannengerichte', 'Backofenrezepte', 'Süßes', 'Nudelgerichte', 'One Pot', 'Blech', 'DIY']
+const cats = ['Pfannengerichte', 'Backofenrezepte', 'Süßes', 'Nudelgerichte', 'One Pot', 'Blech', 'Hausgemachtes']
 
 function RecipeCard({ r }: { r: typeof recipes[number] }) {
   return (
@@ -61,9 +61,9 @@ export default function Home() {
     target: heroSectionRef,
     offset: ['start start', 'end start'],
   })
-  const heroImgY = useTransform(scrollYProgress, [0, 1], [0, 120])
-  const heroImgScale = useTransform(scrollYProgress, [0, 1], [1, 0.9])
-  const heroImgRotate = useTransform(scrollYProgress, [0, 1], [0, 5])
+  const heroImgY = useTransform(scrollYProgress, [0, 1], [0, 60])
+  const heroImgScale = useTransform(scrollYProgress, [0, 1], [1, 0.95])
+  const heroImgRotate = useTransform(scrollYProgress, [0, 1], [0, 3])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -107,29 +107,22 @@ export default function Home() {
   return (
     <main ref={mainRef}>
 
-      {/* ════════════════ HERO — Foody curved style ════════════════ */}
-      <section ref={heroSectionRef} className="relative min-h-screen overflow-hidden">
+      {/* ════════════════ HERO ════════════════ */}
+      <section ref={heroSectionRef} className="relative min-h-screen">
         <SectionDivider circleSize={8} dotCount={2} />
-        {/* Beige base */}
         <div className="absolute inset-0 bg-bg" />
 
-        {/* Sage section — premium gradient with depth */}
+        {/* Sage section */}
         <div className="absolute hidden lg:block" style={{
           top: 0, right: 0, width: '55%', height: '100%',
           background: 'linear-gradient(135deg, #5C7F5A 0%, #6B8F71 25%, #7DA07B 50%, #8FB596 75%, #A3C4A0 100%)',
           borderRadius: '0 0 0 50%',
         }}>
-          {/* Subtle radial glow */}
           <div className="absolute inset-0" style={{
             background: 'radial-gradient(circle at 30% 40%, rgba(255,255,255,0.12) 0%, transparent 60%)',
           }} />
-          {/* Organic texture overlay */}
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
-          {/* Bottom edge soft shadow for depth */}
-          <div className="absolute bottom-0 left-0 right-0 h-32" style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.06), transparent)',
           }} />
           {/* Decorative circles */}
           <div className="absolute top-20 right-16 w-40 h-40 rounded-full border border-white/10" />
@@ -141,19 +134,17 @@ export default function Home() {
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-10 min-h-screen flex flex-col justify-center pt-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center w-full">
 
-            {/* Left — text on beige */}
+            {/* Left — text */}
             <div className="max-w-lg">
-              {/* Full logo centered above the left text column */}
               <div className="flex justify-center mb-8 lg:mb-10">
                 <img src="/images/logo-full.webp" alt="Hannas Happy Home" className="hero-label h-40 md:h-48 lg:h-56 w-auto" style={{ opacity: 0 }} />
               </div>
 
-              {/* Accent bar + heading like Foody */}
               <div className="flex items-start gap-4 mb-6">
                 <div className="hero-title w-1 h-24 md:h-28 bg-sage rounded-full mt-1 shrink-0" style={{ opacity: 0 }} />
                 <div>
                   <h1 className="hero-title font-display text-[clamp(2.6rem,5.5vw,4.5rem)] leading-[1.05] tracking-tight text-heading font-medium" style={{ opacity: 0 }}>
-                    Selbstgemacht.
+                    Hausgemacht.
                   </h1>
                   <h1 className="hero-title font-display text-[clamp(2.8rem,6vw,5rem)] leading-[1] tracking-tight text-sage font-bold italic" style={{ opacity: 0 }}>
                     Mit Liebe!
@@ -169,8 +160,8 @@ export default function Home() {
                 <Link to="/rezepte" className="bg-sage hover:bg-sage-dark text-white text-sm font-medium px-7 py-3.5 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-sage/20">
                   Rezepte entdecken
                 </Link>
-                <Link to="/diy" className="text-sm text-muted hover:text-heading transition-colors border border-line rounded-full px-6 py-3 hover:border-sage/40">
-                  DIY &amp; Selbstgemachtes
+                <Link to="/hausgemachtes" className="text-sm text-muted hover:text-heading transition-colors border border-line rounded-full px-6 py-3 hover:border-sage/40">
+                  Hausgemachtes
                 </Link>
               </div>
 
@@ -188,14 +179,14 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right — circular plate sitting in the concave curve */}
-            <div className="flex justify-center relative">
+            {/* Right — circular plate */}
+            <div className="flex justify-center relative pb-16 md:pb-0">
               <motion.div
                 className="hero-img relative z-10"
                 style={{ y: heroImgY, scale: heroImgScale, rotate: heroImgRotate }}
               >
-                {/* Circular slideshow with thin white ring */}
-                <div className="w-[320px] h-[320px] md:w-[400px] md:h-[400px] lg:w-[460px] lg:h-[460px] rounded-full bg-white p-1.5 shadow-2xl shadow-black/10">
+                {/* Clickable circular slideshow */}
+                <Link to={`/rezepte/${heroSlides[heroSlide].slug}`} className="block w-[320px] h-[320px] md:w-[520px] md:h-[520px] lg:w-[600px] lg:h-[600px] rounded-full bg-white p-1.5 shadow-2xl shadow-black/10">
                   <div className="w-full h-full rounded-full overflow-hidden relative">
                     {heroSlides.map((slide, i) => (
                       <img
@@ -207,7 +198,7 @@ export default function Home() {
                       />
                     ))}
                   </div>
-                </div>
+                </Link>
 
                 {/* Slide dots */}
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
@@ -223,18 +214,18 @@ export default function Home() {
                   ))}
                 </div>
 
-                {/* Floating badge — top right, synced with slideshow */}
-                <div className="hero-badge absolute -top-2 -right-2 md:top-2 md:-right-6 bg-white rounded-2xl p-3 shadow-lg z-20" style={{ opacity: 0 }}>
-                  <div className="flex items-center gap-2">
-                    <img src={heroSlides[heroSlide].image} alt="" className="w-10 h-10 rounded-lg object-cover transition-opacity duration-500" />
+                {/* Floating badge — bigger */}
+                <Link to={`/rezepte/${heroSlides[heroSlide].slug}`} className="hero-badge absolute -top-2 -right-2 md:top-4 md:-right-8 bg-white rounded-2xl p-3.5 shadow-lg z-20 hover:shadow-xl transition-shadow" style={{ opacity: 0 }}>
+                  <div className="flex items-center gap-3">
+                    <img src={heroSlides[heroSlide].image} alt="" className="w-12 h-12 rounded-lg object-cover transition-opacity duration-500" />
                     <div>
-                      <p className="text-xs font-medium text-heading transition-opacity duration-500">{heroSlides[heroSlide].name}</p>
-                      <p className="text-[0.65rem] text-sage">Neu &amp; beliebt</p>
+                      <p className="text-sm font-medium text-heading transition-opacity duration-500">{heroSlides[heroSlide].name}</p>
+                      <p className="text-[0.7rem] text-sage">Neu &amp; beliebt</p>
                     </div>
                   </div>
-                </div>
+                </Link>
 
-                {/* Stats badge — bottom */}
+                {/* Stats badge */}
                 <div className="hero-badge absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-2xl px-5 py-3 shadow-lg z-20" style={{ opacity: 0 }}>
                   <div className="flex items-center gap-5">
                     <div className="text-center">
@@ -282,7 +273,7 @@ export default function Home() {
           <h2 className="font-display text-2xl md:text-3xl text-heading font-medium mb-8">Kategorien</h2>
           <div className="flex flex-wrap justify-center gap-3">
             {cats.map(c => (
-              <Link key={c} to={`/rezepte?category=${encodeURIComponent(c)}`}
+              <Link key={c} to={c === 'Hausgemachtes' ? '/hausgemachtes' : `/rezepte?category=${encodeURIComponent(c)}`}
                 className="bg-white hover:bg-sage hover:text-white text-body text-sm px-6 py-3 rounded-full border border-line hover:border-sage transition-all duration-200 shadow-sm"
               >{c}</Link>
             ))}

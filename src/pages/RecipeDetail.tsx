@@ -1,16 +1,29 @@
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getRecipeBySlug, recipes } from '../data/recipes'
+import { getRecipeBySlug, recipes, scaleIngredient } from '../data/recipes'
 
 export default function RecipeDetail() {
   const { slug } = useParams<{ slug: string }>()
   const r = slug ? getRecipeBySlug(slug) : undefined
+  const [portions, setPortions] = useState(r?.servingsNum ?? 4)
+  const [activeGroup, setActiveGroup] = useState(0)
 
+  // Category-based suggestions (#7)
   const suggestions = r
     ? recipes
-        .filter((rec) => rec.id !== r.id)
+        .filter((rec) => rec.id !== r.id && rec.category === r.category)
         .sort(() => Math.random() - 0.5)
         .slice(0, 3)
     : []
+  // Fallback if not enough in same category
+  if (suggestions.length < 3 && r) {
+    const needed = 3 - suggestions.length
+    const extra = recipes
+      .filter((rec) => rec.id !== r.id && !suggestions.some(s => s.id === rec.id))
+      .sort(() => Math.random() - 0.5)
+      .slice(0, needed)
+    suggestions.push(...extra)
+  }
 
   if (!r) {
     return (
@@ -20,6 +33,11 @@ export default function RecipeDetail() {
       </main>
     )
   }
+
+  const baseServings = r.servingsNum
+  const hasGroups = r.ingredientGroups && r.ingredientGroups.length > 0
+
+  const scaleIng = (ing: string) => scaleIngredient(ing, baseServings, portions)
 
   return (
     <main className="min-h-screen bg-bg pt-24 pb-20">
@@ -42,6 +60,7 @@ export default function RecipeDetail() {
               <span className="inline-block bg-sage/10 text-sage text-xs tracking-wider uppercase font-medium px-4 py-1.5 rounded-full mb-4">{r.category}</span>
               <h1 className="font-display text-3xl md:text-4xl lg:text-5xl text-heading font-medium tracking-tight">{r.name}</h1>
             </div>
+            {/* Apple-style share button (#14) */}
             <button
               onClick={() => {
                 if (navigator.share) {
@@ -54,8 +73,10 @@ export default function RecipeDetail() {
               className="shrink-0 mt-2 w-11 h-11 rounded-full bg-white border border-line hover:border-sage/40 flex items-center justify-center transition-colors cursor-pointer group"
               aria-label="Rezept teilen"
             >
-              <svg className="w-5 h-5 text-muted group-hover:text-sage transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+              <svg className="w-5 h-5 text-muted group-hover:text-sage transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 3v12" />
+                <path d="M8 7l4-4 4 4" />
+                <rect x="4" y="11" width="16" height="10" rx="2" fill="none" />
               </svg>
             </button>
           </div>
@@ -81,13 +102,24 @@ export default function RecipeDetail() {
                 <p className="text-sm text-heading font-medium">{r.difficulty}</p>
               </div>
             </div>
+            {/* Portionsrechner (#12) */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center">
                 <svg className="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
               <div>
                 <p className="text-[0.7rem] text-muted uppercase tracking-wide">Portionen</p>
-                <p className="text-sm text-heading font-medium">{r.servings}</p>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setPortions(p => Math.max(1, p - 1))}
+                    className="w-7 h-7 rounded-full bg-sage/10 hover:bg-sage/20 flex items-center justify-center text-sage font-bold text-sm cursor-pointer transition-colors"
+                  >-</button>
+                  <span className="text-sm text-heading font-medium w-4 text-center">{portions}</span>
+                  <button
+                    onClick={() => setPortions(p => Math.min(12, p + 1))}
+                    className="w-7 h-7 rounded-full bg-sage/10 hover:bg-sage/20 flex items-center justify-center text-sage font-bold text-sm cursor-pointer transition-colors"
+                  >+</button>
+                </div>
               </div>
             </div>
           </div>
@@ -114,23 +146,64 @@ export default function RecipeDetail() {
               </div>
             )}
 
-            {/* Zutaten */}
-            <div className={`md:col-span-2 ${r.instagramUrl ? 'md:pt-[52px]' : ''}`}>
-              <div className="bg-white rounded-2xl p-6 border border-line sticky top-24">
-                <h2 className="font-display text-xl text-heading font-medium mb-5">Zutaten</h2>
-                <ul className="space-y-2.5">
-                  {r.ingredients.map((ing, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-body">
-                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-sage shrink-0" />
-                      {ing}
-                    </li>
+            {/* Zutaten (#15 heading outside box, #13 ingredient groups) */}
+            <div className={`md:col-span-2`}>
+              <h2 className="font-display text-xl text-heading font-medium mb-5">Zutaten</h2>
+
+              {/* Ingredient group tabs */}
+              {hasGroups && (
+                <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
+                  {r.ingredientGroups!.map((g, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveGroup(i)}
+                      className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap cursor-pointer transition-all ${
+                        activeGroup === i
+                          ? 'bg-sage text-white'
+                          : 'bg-white text-muted border border-line hover:border-sage/30'
+                      }`}
+                    >{g.name}</button>
                   ))}
+                </div>
+              )}
+
+              <div className="bg-white rounded-2xl p-6 border border-line sticky top-24">
+                <ul className="space-y-2.5">
+                  {hasGroups
+                    ? r.ingredientGroups![activeGroup].items.map((ing, i) => (
+                        <li key={i} className="flex items-start gap-3 text-sm text-body">
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-sage shrink-0" />
+                          {scaleIng(ing)}
+                        </li>
+                      ))
+                    : r.ingredients.map((ing, i) => (
+                        <li key={i} className="flex items-start gap-3 text-sm text-body">
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-sage shrink-0" />
+                          {scaleIng(ing)}
+                        </li>
+                      ))
+                  }
                 </ul>
+
+                {/* Swipe dots for groups on mobile */}
+                {hasGroups && (
+                  <div className="flex justify-center gap-1.5 mt-4 md:hidden">
+                    {r.ingredientGroups!.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setActiveGroup(i)}
+                        className={`w-2 h-2 rounded-full transition-all cursor-pointer ${
+                          activeGroup === i ? 'bg-sage w-4' : 'bg-line'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Zubereitung */}
-            <div className={`md:col-span-3 ${r.instagramUrl ? 'md:pt-[52px]' : ''}`}>
+            <div className={`md:col-span-3`}>
               <h2 className="font-display text-xl text-heading font-medium mb-6">Zubereitung</h2>
               <div className="space-y-6">
                 {r.steps.map((step, i) => (

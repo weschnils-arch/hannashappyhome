@@ -7,7 +7,7 @@ import Home from './pages/Home'
 import Rezepte from './pages/Rezepte'
 import UeberMich from './pages/UeberMich'
 import RecipeDetail from './pages/RecipeDetail'
-import DIY from './pages/DIY'
+import Hausgemachtes from './pages/Hausgemachtes'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -24,7 +24,7 @@ function AppShell() {
         <Route path="/" element={<Home />} />
         <Route path="/rezepte" element={<Rezepte />} />
         <Route path="/rezepte/:slug" element={<RecipeDetail />} />
-        <Route path="/diy" element={<DIY />} />
+        <Route path="/hausgemachtes" element={<Hausgemachtes />} />
         <Route path="/ueber-mich" element={<UeberMich />} />
       </Routes>
       <Footer />
