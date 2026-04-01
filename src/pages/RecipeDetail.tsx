@@ -1,6 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { getRecipeBySlug, recipes, scaleIngredient } from '../data/recipes'
+
+function RecipeJsonLd({ r, portions }: { r: typeof recipes[number]; portions: number }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Recipe',
+    name: r.name,
+    description: r.desc,
+    image: `${window.location.origin}${r.image}`,
+    author: { '@type': 'Person', name: 'Hanna' },
+    recipeYield: `${portions} Portionen`,
+    recipeCategory: r.category,
+    recipeIngredient: r.ingredients,
+    recipeInstructions: r.steps.map((step, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      text: step,
+    })),
+  }
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  )
+}
 
 export default function RecipeDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -8,14 +33,35 @@ export default function RecipeDetail() {
   const [portions, setPortions] = useState(r?.servingsNum ?? 4)
   const [activeGroup, setActiveGroup] = useState(0)
 
-  // Category-based suggestions (#7)
+  // Load Bring widget script
+  useEffect(() => {
+    if (!document.querySelector('script[src*="getbring.com"]')) {
+      const script = document.createElement('script')
+      script.src = '//platform.getbring.com/widgets/import.js'
+      script.async = true
+      document.body.appendChild(script)
+    }
+    // Re-render Bring widget on page change
+    const timer = setTimeout(() => {
+      if ((window as any).bringwidgets?.import?.render) {
+        const el = document.getElementById('bring-import')
+        if (el) (window as any).bringwidgets.import.render(el, {
+          url: window.location.href,
+          theme: 'light',
+          language: 'de',
+        })
+      }
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [slug])
+
+  // Category-based suggestions
   const suggestions = r
     ? recipes
         .filter((rec) => rec.id !== r.id && rec.category === r.category)
         .sort(() => Math.random() - 0.5)
         .slice(0, 3)
     : []
-  // Fallback if not enough in same category
   if (suggestions.length < 3 && r) {
     const needed = 3 - suggestions.length
     const extra = recipes
@@ -36,11 +82,13 @@ export default function RecipeDetail() {
 
   const baseServings = r.servingsNum
   const hasGroups = r.ingredientGroups && r.ingredientGroups.length > 0
-
   const scaleIng = (ing: string) => scaleIngredient(ing, baseServings, portions)
+
+  const bringDeeplink = `https://api.getbring.com/rest/bringrecipes/deeplink?url=${encodeURIComponent(window.location.href)}&source=web&baseQuantity=${baseServings}&requestedQuantity=${portions}`
 
   return (
     <main className="min-h-screen bg-bg pt-24 pb-20">
+      <RecipeJsonLd r={r} portions={portions} />
       <div className="max-w-[1280px] mx-auto px-6 md:px-10">
         {/* Back */}
         <Link to="/rezepte" className="inline-flex items-center gap-2 text-sm text-muted hover:text-sage mb-6 transition-colors">
@@ -60,7 +108,7 @@ export default function RecipeDetail() {
               <span className="inline-block bg-sage/10 text-sage text-xs tracking-wider uppercase font-medium px-4 py-1.5 rounded-full mb-4">{r.category}</span>
               <h1 className="font-display text-3xl md:text-4xl lg:text-5xl text-heading font-medium tracking-tight">{r.name}</h1>
             </div>
-            {/* Apple-style share button (#14) */}
+            {/* Apple-style share button */}
             <button
               onClick={() => {
                 if (navigator.share) {
@@ -102,7 +150,7 @@ export default function RecipeDetail() {
                 <p className="text-sm text-heading font-medium">{r.difficulty}</p>
               </div>
             </div>
-            {/* Portionsrechner (#12) */}
+            {/* Portionsrechner */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center">
                 <svg className="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -146,7 +194,7 @@ export default function RecipeDetail() {
               </div>
             )}
 
-            {/* Zutaten (#15 heading outside box, #13 ingredient groups) */}
+            {/* Zutaten */}
             <div className={`md:col-span-2`}>
               <h2 className="font-display text-xl text-heading font-medium mb-5">Zutaten</h2>
 
@@ -185,7 +233,6 @@ export default function RecipeDetail() {
                   }
                 </ul>
 
-                {/* Swipe dots for groups on mobile */}
                 {hasGroups && (
                   <div className="flex justify-center gap-1.5 mt-4 md:hidden">
                     {r.ingredientGroups!.map((_, i) => (
@@ -199,6 +246,22 @@ export default function RecipeDetail() {
                     ))}
                   </div>
                 )}
+
+                {/* Bring! Button */}
+                <div className="mt-5 pt-4 border-t border-line/50">
+                  <a
+                    href={bringDeeplink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2.5 w-full py-3 rounded-xl bg-[#455A64] hover:bg-[#37474F] text-white text-sm font-medium transition-colors"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+                      <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+                    </svg>
+                    Zutaten auf die Einkaufsliste
+                  </a>
+                </div>
               </div>
             </div>
 
